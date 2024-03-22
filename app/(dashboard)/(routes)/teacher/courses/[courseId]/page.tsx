@@ -1,7 +1,9 @@
+import { CategoryForm } from "@/app/(dashboard)/_components/CategoryForm";
 import { DescriptionForm } from "@/app/(dashboard)/_components/DescriptionForm";
 import { ImageForm } from "@/app/(dashboard)/_components/ImageForm";
 import { TitleForm } from "@/app/(dashboard)/_components/TitleForm";
 import { IconBadge } from "@/components/IconBadge";
+import { Combobox } from "@/components/ui/combobox";
 import { db } from "@/lib/db";
 import { auth } from "@clerk/nextjs";
 import { LayoutDashboard } from "lucide-react";
@@ -23,6 +25,14 @@ const SingleCoursePage = async ({
       id: params.courseId,
     },
   });
+
+  const categories = await db.category.findMany({
+    orderBy: {
+      name: "asc",
+    },
+  });
+
+  console.log(categories);
 
   const requiredFields = [
     //put course before all the fields
@@ -58,18 +68,19 @@ const SingleCoursePage = async ({
               {<IconBadge icon={LayoutDashboard} />}
               <h2 className="text-xl">Customize your course</h2>
             </div>
-            <TitleForm
+            <TitleForm initialData={course} courseId={course.id} />
+            <DescriptionForm initialData={course} courseId={course.id} />
+            <ImageForm initialData={course} courseId={course.id} />
+            
+            {/* <CategoryForm
               initialData={course}
               courseId={course.id}
-            />
-            <DescriptionForm
-              initialData={course}
-              courseId={course.id}
-            />
-            <ImageForm
-              initialData={course}
-              courseId={course.id}
-            />
+              options={categories.map((category) => ({
+                label: category.name,
+                value: category.id,
+              }))}
+            /> */}
+            
           </div>
         </div>
       </div>
